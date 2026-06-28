@@ -1,7 +1,6 @@
 import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -9,7 +8,7 @@ from slowapi.errors import RateLimitExceeded
 from dotenv import load_dotenv
 import logging
 
-from app.routers import api, pages
+from app.routers import api
 
 # Load environment variables
 load_dotenv()
@@ -38,7 +37,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS configuration
-origins = os.getenv("CORS_ORIGINS", "*").split(",")
+origins = os.getenv("CORS_ORIGINS", "https://instadl.vercel.app,http://localhost:3000").split(",")
 
 app.add_middleware(
     CORSMiddleware,
@@ -59,13 +58,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://googleads.g.doubleclick.net;"
     return response
 
-# Mount Static Files
-# Ensures `app/static` exists
-os.makedirs("app/static", exist_ok=True)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 # Include Routers
-app.include_router(pages.router)
 app.include_router(api.router, prefix="/api", tags=["API"])
 
 @app.exception_handler(Exception)

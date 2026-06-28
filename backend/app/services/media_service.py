@@ -2,7 +2,6 @@ import logging
 import asyncio
 from datetime import datetime, timezone
 import yt_dlp
-import instaloader
 from app.models.schemas import ProcessResponse, MediaItem
 
 logger = logging.getLogger(__name__)
