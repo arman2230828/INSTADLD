@@ -37,14 +37,20 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS configuration
-origins = os.getenv("CORS_ORIGINS", "https://instadl.vercel.app,http://localhost:3000").split(",")
+origins = [
+    "https://instadld-zeav.vercel.app",
+    "https://fastapk.in",
+    "https://www.fastapk.in",
+    "http://localhost:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Security Headers Middleware
